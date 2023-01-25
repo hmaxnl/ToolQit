@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolQit", "ToolQit\ToolQit.csproj", "{14805C53-218D-4774-981D-CBA412D5743E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestQit", "TestQit\TestQit.csproj", "{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{14805C53-218D-4774-981D-CBA412D5743E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14805C53-218D-4774-981D-CBA412D5743E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14805C53-218D-4774-981D-CBA412D5743E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14805C53-218D-4774-981D-CBA412D5743E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
