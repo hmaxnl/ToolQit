@@ -17,7 +17,7 @@ namespace ToolQit
     
     public enum ResultCode
     {
-        Ok,
+        Success,
         Warning,
         Error,
         Fatal
