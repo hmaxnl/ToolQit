@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace ToolQit.Collections
 {
@@ -9,41 +11,42 @@ namespace ToolQit.Collections
         {
             _dividerChar = dividerChar;
         }
-        private readonly Dictionary<string, DataCollection> _data = new Dictionary<string, DataCollection>();
-        private readonly Dictionary<string, string> _contents = new Dictionary<string, string>();
+        private readonly Dictionary<string, DataCollection> _collections = new Dictionary<string, DataCollection>();
+        private readonly Dictionary<int, string> _dataDictionary = new Dictionary<int, string>();
         private readonly char _dividerChar;
 
-        public void SetString(string key, string value) => _contents[key] = value;
+        public void SetString(string sValue, int index = 0) => _dataDictionary[index] = sValue;
+        public void SetInt(int iValue, int index = 0) => SetString(Convert.ToString(iValue), index);
+        public void SetReal(double dValue, int index = 0) => SetString(Convert.ToString(dValue, CultureInfo.CurrentCulture), index);
 
-        public string GetString(string key) => !_contents.ContainsKey(key) ? string.Empty : _contents[key];
+        public string GetString(int index = 0) => _dataDictionary.Count < index ? String.Empty : _dataDictionary[index];
+        public int GetInt(int index = 0) => Convert.ToInt32(GetString(index));
+        public double GetReal(int index = 0) => Convert.ToDouble(GetString(index));
 
         public DataCollection this[string key]
         {
             get
             {
                 if (key.Contains(_dividerChar))
-                {
-                    AddFromQueue(new KeyQueue(key, _dividerChar));
-                    //TODO: Get the data!
-                }
+                    return AddFromQueue(new KeyQueue(key, _dividerChar));
 
                 CheckAddKey(key);
-                return _data[key];
+                return _collections[key];
             }
         }
 
-        private void AddFromQueue(KeyQueue queue)
+        private DataCollection AddFromQueue(KeyQueue queue)
         {
-            if (queue.IsEmpty) return;
+            if (queue.IsEmpty) return this;
             string queueKey = queue.Next();
             CheckAddKey(queueKey);
-            _data[queueKey].AddFromQueue(queue);
+            return _collections[queueKey].AddFromQueue(queue);
         }
 
         private void CheckAddKey(string key)
         {
-            if (!_data.ContainsKey(key))
-                _data.Add(key, new DataCollection(_dividerChar));
+            if (!_collections.ContainsKey(key))
+                _collections.Add(key, new DataCollection(_dividerChar));
         }
     }
 
