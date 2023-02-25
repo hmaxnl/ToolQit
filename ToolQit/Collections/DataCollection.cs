@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace ToolQit.Collections
 {
+    //TODO: Implement serializer -> JSON & Text
     public class DataCollection
     {
         public DataCollection(char dividerChar = '.')
@@ -52,7 +52,7 @@ namespace ToolQit.Collections
 
     class KeyQueue
     {
-        public KeyQueue(string key, char divider = '.')
+        public KeyQueue(string key, char divider)
         {
             _key = new Queue<string>(key.Split(divider, StringSplitOptions.RemoveEmptyEntries));
         }
