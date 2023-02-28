@@ -1,4 +1,5 @@
 ﻿using System;
+using ToolQit.Collections;
 
 namespace TestQit
 {
@@ -7,6 +8,7 @@ namespace TestQit
         public static void Main()
         {
             Console.WriteLine("Test!");
+            DataCollection collection = new DataCollection();
         }
     }
 }
