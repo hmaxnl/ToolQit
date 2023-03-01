@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+using System.Text.Json;
+using ToolQit.Converters;
 
 namespace ToolQit.Collections
 {
@@ -20,18 +20,15 @@ namespace ToolQit.Collections
         }
 
         private readonly DataCollection? _parent = null;
-        private readonly Dictionary<string, DataCollection> _collections = new Dictionary<string, DataCollection>();
-        private readonly Dictionary<int, string> _dataDictionary = new Dictionary<int, string>();
+        internal readonly Dictionary<string, DataCollection> _collections = new Dictionary<string, DataCollection>();
+        internal readonly Dictionary<string, object> _data = new Dictionary<string, object>();
         private readonly char _separator;
 
-        public void SetString(string sValue, int index = 0) => _dataDictionary[index] = sValue;
-        public void SetInt(int iValue, int index = 0) => SetString(Convert.ToString(iValue), index);
-        public void SetReal(double dValue, int index = 0) => SetString(Convert.ToString(dValue, CultureInfo.CurrentCulture), index);
-
-        public string GetString(int index = 0) => _dataDictionary.Count < index ? String.Empty : _dataDictionary[index];
-        public int GetInt(int index = 0) => Convert.ToInt32(GetString(index));
-        public double GetReal(int index = 0) => Convert.ToDouble(GetString(index));
-
+        public void Set(string key, string sValue) => _data[key] = sValue;
+        public void Set(string key, int iValue) => _data[key] = iValue;
+        public void Set(string key, double dValue) => _data[key] = dValue;
+        public void Set(string key, bool bValue) => _data[key] = bValue;
+        
         public DataCollection this[string key]
         {
             get
@@ -43,6 +40,8 @@ namespace ToolQit.Collections
                 return _collections[key];
             }
         }
+
+        public string ToJson() => JsonSerializer.SerializeToNode(this, new JsonSerializerOptions() { Converters = { new DataCollectionJsonConverter() }})?.ToString() ?? String.Empty;
 
         private DataCollection AddFromQueue(KeyQueue queue)
         {
@@ -56,13 +55,6 @@ namespace ToolQit.Collections
         {
             if (!_collections.ContainsKey(key))
                 _collections.Add(key, new DataCollection(this));
-        }
-
-        public override string ToString()
-        {
-            StringBuilder data = new StringBuilder();
-            
-            return base.ToString();
         }
     }
 
