@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using ToolQit.Collections;
 
 namespace TestQit
@@ -9,7 +10,7 @@ namespace TestQit
         {
             Console.WriteLine("Test!");
             DataCollection col = RandomCollection();
-            var testJson = col.ToJson();
+            DataCollection? copyCollection = JsonSerializer.Deserialize<DataCollection>(col.ToJson(), col.CollectionJsonOptions);
         }
 
         public static DataCollection RandomCollection()

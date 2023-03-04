@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text.Json;
 using ToolQit.Converters;
 
 namespace ToolQit.Collections
 {
-    //TODO: Implement serializer -> JSON & Text
     public class DataCollection
     {
         public DataCollection(char separator = '.')
@@ -15,20 +15,20 @@ namespace ToolQit.Collections
 
         private DataCollection(DataCollection parent)
         {
-            _parent = parent;
-            _separator = _parent._separator;
+            _separator = parent._separator;
+            CollectionJsonOptions = parent.CollectionJsonOptions;
         }
 
-        private readonly DataCollection? _parent = null;
-        internal readonly Dictionary<string, DataCollection> _collections = new Dictionary<string, DataCollection>();
-        internal readonly Dictionary<string, object> _data = new Dictionary<string, object>();
+        private readonly Dictionary<string, DataCollection> _collections = new Dictionary<string, DataCollection>();
+        private readonly Dictionary<string, object> _data = new Dictionary<string, object>();
         private readonly char _separator;
 
         public void Set(string key, string sValue) => _data[key] = sValue;
-        public void Set(string key, int iValue) => _data[key] = iValue;
+        public void Set(string key, long lValue) => _data[key] = lValue;
         public void Set(string key, double dValue) => _data[key] = dValue;
         public void Set(string key, bool bValue) => _data[key] = bValue;
-        
+        public void AddCollection(string key, DataCollection collection) => _collections.Add(key, collection);
+
         public DataCollection this[string key]
         {
             get
@@ -40,8 +40,14 @@ namespace ToolQit.Collections
                 return _collections[key];
             }
         }
+        
+        public ReadOnlyDictionary<string, DataCollection> DataCollections => new ReadOnlyDictionary<string, DataCollection>(_collections);
+        public ReadOnlyDictionary<string, object> Data => new ReadOnlyDictionary<string, object>(_data);
 
-        public string ToJson() => JsonSerializer.SerializeToNode(this, new JsonSerializerOptions() { Converters = { new DataCollectionJsonConverter() }})?.ToString() ?? String.Empty;
+        public JsonSerializerOptions CollectionJsonOptions = new JsonSerializerOptions()
+            { Converters = { new DataCollectionJsonConverter() } };
+
+        public string ToJson() => JsonSerializer.SerializeToNode(this, CollectionJsonOptions)?.ToString() ?? string.Empty;
 
         private DataCollection AddFromQueue(KeyQueue queue)
         {
@@ -58,7 +64,7 @@ namespace ToolQit.Collections
         }
     }
 
-    class KeyQueue
+    internal class KeyQueue
     {
         public KeyQueue(string key, char divider)
         {
