@@ -27,6 +27,9 @@ namespace ToolQit.Collections
         public void Set(string key, long lValue) => _data[key] = lValue;
         public void Set(string key, double dValue) => _data[key] = dValue;
         public void Set(string key, bool bValue) => _data[key] = bValue;
+        public bool Unset(string key) => _data.Remove(key);
+        public void ClearData() => _data.Clear();
+
         public void AddCollection(string key, DataCollection collection) => _collections.Add(key, collection);
 
         public DataCollection this[string key]

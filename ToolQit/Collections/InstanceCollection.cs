@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ToolQit.Extensions;
 
@@ -5,25 +6,31 @@ namespace ToolQit.Collections
 {
     public class InstanceCollection
     {
-        public InstanceCollection()
+        public void Register<TInstance>(string key, TInstance? instance = default)
         {
-            
+            if (key.IsNullEmptyWhiteSpace()) return;
+            _instances[key] = new InstanceData() { Instance = instance, InstanceType = typeof(TInstance) };
         }
-
-        public void Register<TInstance>(string name, TInstance instance)
+        public TInstance? Get<TInstance>(string key)
         {
-            if (name.IsNullEmptyWhiteSpace()) return;
-            _instances[name] = instance;
+            if (key.IsNullEmptyWhiteSpace() || !_instances.TryGetValue(key, out InstanceData iData)) return default;
+            if (typeof(TInstance) != iData.InstanceType) return default;
+            if (iData.Instance != null)
+                return (TInstance)iData.Instance;
+            iData.Instance = Activator.CreateInstance(iData.InstanceType);
+            if (iData.Instance == null)
+                return default;
+            _instances[key] = iData;
+            return (TInstance)iData.Instance;
         }
+        public bool Remove(string key) => _instances.Remove(key);
 
-        public TInstance? Get<TInstance>(string name)
-        {
-            if (name.IsNullEmptyWhiteSpace() || _instances.TryGetValue(name, out object? obj)) return default;
-            if (obj?.GetType() == typeof(TInstance))
-                return (TInstance?)obj;
-            return default;
-        }
+        private readonly Dictionary<string, InstanceData> _instances = new Dictionary<string, InstanceData>();
+    }
 
-        private readonly Dictionary<string, object?> _instances = new Dictionary<string, object?>();
+    internal struct InstanceData
+    {
+        public object? Instance;
+        public Type InstanceType;
     }
 }
