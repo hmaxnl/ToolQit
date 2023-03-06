@@ -6,4 +6,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Collections" />
+      <Folder Include="Converters" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Converters\DataCollectionJsonConverter.cs" />
+    </ItemGroup>
+
 </Project>
