@@ -7,7 +7,7 @@ namespace TestQit
     {
         public static void Main()
         {
-            Console.WriteLine($"Library name: {Global.Data["Lib"].GetString("Name")}");
+            Console.WriteLine($"Library name: {Global.Data.GetString("Name")}");
         }
     }
 }

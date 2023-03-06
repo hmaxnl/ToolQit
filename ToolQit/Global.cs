@@ -24,9 +24,11 @@ namespace ToolQit
         private static void _setupData(this DataContainer collection)
         {
             // Global data
-            DataContainer libCollection = Data["Lib"];
-            libCollection.Set("Name", "ToolQit");
-            libCollection.Set("LogPath", Path.Combine(Environment.CurrentDirectory, "log"));
+            Data.Set("Name", "ToolQit");
+            Data.Set("LogPath", Path.Combine(Environment.CurrentDirectory, "log"));
+            Data["OS"].Set("CommandLine", Environment.CommandLine);
+            Data.Set("UserInteractive", Environment.UserInteractive);
+            Data.Set("pid", Environment.ProcessId);
             
             // Lib data
             LibData["Defaults.Paths"].Set("MainStorage", Path.Combine(Environment.CurrentDirectory, "app_data.json"));
