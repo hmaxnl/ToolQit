@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace ToolQit.Containers
 {
@@ -11,7 +12,9 @@ namespace ToolQit.Containers
         }
 
         private readonly char _separator;
-        protected readonly Dictionary<string, TContainer> Containers = new Dictionary<string, TContainer>();
+        private readonly Dictionary<string, TContainer> _containers = new Dictionary<string, TContainer>();
+        public ReadOnlyDictionary<string, TContainer> Containers => new ReadOnlyDictionary<string, TContainer>(_containers);
+        
         public TContainer this[string key]
         {
             get
@@ -19,23 +22,23 @@ namespace ToolQit.Containers
                 if (key.Contains(_separator))
                     return AddFromQueue(new KeyQueue(key, _separator));
                 AddContainer(key, new TContainer());
-                return Containers[key];
+                return _containers[key];
             }
         }
         public void AddContainer(string key, TContainer container)
         {
-            if (!Containers.ContainsKey(key))
-                Containers.Add(key, container);
+            if (!_containers.ContainsKey(key))
+                _containers.Add(key, container);
         }
-        public bool RemoveContainer(string key) => Containers.Remove(key);
-        public TContainer GetContainer(string key) => Containers[key];
+        public bool RemoveContainer(string key) => _containers.Remove(key);
+        public TContainer GetContainer(string key) => _containers[key];
 
         TContainer AddFromQueue(KeyQueue queue)
         {
             if (queue.IsEmpty) return (TContainer)this;
             string queueKey = queue.Next();
             AddContainer(queueKey, new TContainer());
-            return Containers[queueKey].AddFromQueue(queue);
+            return _containers[queueKey].AddFromQueue(queue);
         }
     }
     
