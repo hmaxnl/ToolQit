@@ -6,15 +6,16 @@ using ToolQit.Extensions;
 
 namespace ToolQit.Serializers
 {
-    public class DataContainerJsonSerializer : ISerialize<DataContainer>
+    public class DataContainerJsonSerializer : ISerializer
     {
-        public bool Serialize(Stream stream, DataContainer data)
+        public bool Serialize(Stream stream, object data)
         {
-            if (data.Containers.Count == 0 && data.Data.Count == 0) return false;
+            if (data is not DataContainer container) return false;
+            if (container.Containers.Count == 0 && container.Data.Count == 0) return false;
             
             using Utf8JsonWriter jsonWriter = new Utf8JsonWriter(stream);
             jsonWriter.WriteStartObject();
-            foreach (var kvpData in data.Data)
+            foreach (var kvpData in container.Data)
             {
                 switch (kvpData.Value)
                 {
@@ -33,7 +34,7 @@ namespace ToolQit.Serializers
                 }
             }
                 
-            foreach (var kvpCollection in data.Containers)
+            foreach (var kvpCollection in container.Containers)
             {
                 MemoryStream serStream = new MemoryStream();
                 if (!Serialize(serStream, kvpCollection.Value)) continue;
@@ -45,11 +46,16 @@ namespace ToolQit.Serializers
             return true;
         }
 
-        public bool Deserialize(Stream stream, out DataContainer output)
+        public bool Deserialize(Stream stream, out object output)
         {
-            output = new DataContainer();
+            DataContainer container = new DataContainer();
+            output = container;
+            if (stream.Length == 0) return false;
+            
             using MemoryStream jsonMemoryStream = new MemoryStream();
+            stream.Position = 0;
             stream.CopyTo(jsonMemoryStream);
+            
             Utf8JsonReader jsonReader = new Utf8JsonReader(new ReadOnlySequence<byte>(jsonMemoryStream.ToArray()));
             jsonReader.Read();
             if (jsonReader.TokenType != JsonTokenType.StartObject) return false;
@@ -65,27 +71,27 @@ namespace ToolQit.Serializers
                         case JsonTokenType.String:
                             string stringValue = jsonReader.GetString() ?? string.Empty;
                             if (stringValue.IsNullEmpty()) continue;
-                            output.Set(propName, stringValue);
+                            container.Set(propName, stringValue);
                             break;
                         case JsonTokenType.Number:
                             if (jsonReader.TryGetDouble(out double dValue))
                             {
-                                output.Set(propName, dValue);
+                                container.Set(propName, dValue);
                                 continue;
                             }
                             if (jsonReader.TryGetInt64(out long lValue))
-                                output.Set(propName, lValue);
+                                container.Set(propName, lValue);
                             break;
                         case JsonTokenType.True:
                         case JsonTokenType.False:
-                            output.Set(propName, jsonReader.GetBoolean());
+                            container.Set(propName, jsonReader.GetBoolean());
                             break;
                         case JsonTokenType.StartObject:
                             using (JsonDocument jsonDoc = JsonDocument.ParseValue(ref jsonReader))
                             {
-                                if (!Deserialize(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonDoc.RootElement.ToString())), out DataContainer subColl))
+                                if (!Deserialize(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonDoc.RootElement.ToString())), out object subColl) || subColl is not DataContainer subCollContainer)
                                     continue;
-                                output.AddContainer(propName, subColl);
+                                container.AddContainer(propName, subCollContainer);
                             }
                             break;
                     }

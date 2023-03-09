@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
 using ToolQit;
-using ToolQit.Serializers;
+using ToolQit.Containers;
 
 namespace TestQit
 {
@@ -9,12 +8,23 @@ namespace TestQit
     {
         public static void Main()
         {
-            Console.WriteLine($"Library name: {Global.Data.GetString("Name")}");
+            Storage.Container.InitStorage();
+            Console.WriteLine($"Welcome to {Storage.Container.GetString("Name")} Library!");
+        }
 
-            MemoryStream jsonStream = new MemoryStream();
-            DataContainerJsonSerializer ser = new DataContainerJsonSerializer();
-            if (!ser.Serialize(jsonStream, Global.Data)) return;
-            var json = System.Text.Encoding.UTF8.GetString(jsonStream.ToArray());
+        // Test values
+        private static void InitStorage(this DataContainer container)
+        {
+            container.Set("Name", "ToolQit");
+            container.Set("Type", "Lib");
+            var env = container["Environment"];
+            env.Set("cmd", Environment.CommandLine);
+            env.Set("CurrentDir", Environment.CurrentDirectory);
+            env.Set("Ticks", Environment.TickCount64);
+            env.Set("User", Environment.UserName);
+            var os = container["OS"];
+            os.Set("Type", "Linux");
+            os.Set("Is64", Environment.Is64BitOperatingSystem);
         }
     }
 }
