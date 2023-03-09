@@ -16,7 +16,7 @@ namespace ToolQit.Tools
 
         public static TObject? Deserialize<TObject>(string data, ISerializer serializer)
         {
-            MemoryStream dataStream = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            using MemoryStream dataStream = new MemoryStream(Encoding.UTF8.GetBytes(data));
             if (serializer.Deserialize(dataStream, out object output) && output is TObject obj) return obj;
             return default;
         }

@@ -13,7 +13,7 @@ namespace ToolQit.Serializers
             if (data is not DataContainer container) return false;
             if (container.Containers.Count == 0 && container.Data.Count == 0) return false;
             
-            using Utf8JsonWriter jsonWriter = new Utf8JsonWriter(stream);
+            using Utf8JsonWriter jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true });
             jsonWriter.WriteStartObject();
             foreach (var kvpData in container.Data)
             {

@@ -1,6 +1,8 @@
 ﻿using System;
 using ToolQit;
 using ToolQit.Containers;
+using ToolQit.Serializers;
+using ToolQit.Tools;
 
 namespace TestQit
 {
@@ -10,6 +12,7 @@ namespace TestQit
         {
             Storage.Container.InitStorage();
             Console.WriteLine($"Welcome to {Storage.Container.GetString("Name")} Library!");
+            var testJson = Serializer.Serialize(Storage.Container, new DataContainerJsonSerializer());
         }
 
         // Test values
