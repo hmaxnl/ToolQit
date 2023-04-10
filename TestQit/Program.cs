@@ -1,9 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using ToolQit;
 using ToolQit.Containers;
-using ToolQit.Serializers;
 
 namespace TestQit
 {
@@ -13,10 +10,6 @@ namespace TestQit
         {
             Storage.Container.InitData();
             Console.WriteLine($"Welcome to {Storage.Container.GetString("Name")} Library!");
-            MemoryStream jsonData = new MemoryStream();
-            DataContainerJsonSerializer ser = new DataContainerJsonSerializer();
-            ser.Serialize(jsonData, Storage.Container);
-            string? jsonStr = Encoding.Default.GetString(jsonData.GetBuffer());
         }
 
         // Test values

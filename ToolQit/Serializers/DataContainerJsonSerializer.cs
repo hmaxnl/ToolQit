@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ToolQit.Containers;
 using ToolQit.Extensions;
 
@@ -9,12 +10,17 @@ namespace ToolQit.Serializers
 {
     public class DataContainerJsonSerializer : ISerializer
     {
+        #region Newtonsoft
         public bool Serialize(Stream stream, object data)
         {
             if (data is not DataContainer container) return false;
             if (container.Containers.Count == 0 && container.Data.Count == 0) return false;
-            JsonWriter jsonWriter = new JsonTextWriter(new StreamWriter(stream));
-            jsonWriter.Formatting = Formatting.Indented;
+            JsonWriter jsonWriter = new JsonTextWriter(new StreamWriter(stream))
+            {
+                Formatting = Formatting.Indented,
+                CloseOutput = false,
+                AutoCompleteOnClose = false
+            };
             
             jsonWriter.WriteStartObject();
             foreach (var kvpData in container.Data)
@@ -43,12 +49,13 @@ namespace ToolQit.Serializers
                 if (!Serialize(serStream, kvpCollection.Value)) continue;
                 if (serStream.Length == 0) continue;
                 jsonWriter.WritePropertyName(kvpCollection.Key);
-                jsonWriter.WriteRawValue(Encoding.Default.GetString(serStream.GetBuffer()));
+                // Tokenize the JSON so we keep the indentation.
+                using JsonReader jsonTxtReader =
+                    new JsonTextReader(new StringReader(Encoding.Default.GetString(serStream.ToArray())));
+                jsonWriter.WriteToken(jsonTxtReader);
             }
             
             jsonWriter.WriteEndObject();
-            jsonWriter.CloseOutput = false;
-            jsonWriter.AutoCompleteOnClose = true;
             jsonWriter.Flush();
             jsonWriter.Close();
             return true;
@@ -64,36 +71,39 @@ namespace ToolQit.Serializers
             stream.Position = 0;
             stream.CopyTo(jsonMemoryStream);
 
-            using JsonReader jsonReader = new JsonTextReader(new StreamReader(stream));
+            jsonMemoryStream.Position = 0;
+            StreamReader strReader = new StreamReader(jsonMemoryStream);
+            using JsonReader jsonReader = new JsonTextReader(strReader);
             jsonReader.Read();
             if (jsonReader.TokenType != JsonToken.StartObject) return false;
             while (jsonReader.Read())
             {
                 if (jsonReader.TokenType == JsonToken.PropertyName)
                 {
-                    string propName = jsonReader.ReadAsString() ?? string.Empty;
+                    string propName = jsonReader.Value?.ToString() ?? string.Empty;
                     if (propName.IsNullEmpty()) continue;
-                    jsonReader.Read();
+                    if (!jsonReader.Read()) return false;
                     switch (jsonReader.TokenType) // Value
                     {
                         case JsonToken.String:
-                            string stringValue = jsonReader.ReadAsString() ?? string.Empty;
+                            string stringValue = jsonReader.Value?.ToString() ?? string.Empty;
                             if (stringValue.IsNullEmpty()) continue;
                             container.Set(propName, stringValue);
                             break;
                         case JsonToken.Float:
-                            double dValue = jsonReader.ReadAsDouble() ?? 0; 
+                            double dValue = Convert.ToInt64(jsonReader.Value); 
                             container.Set(propName, dValue);
                             break;
                         case JsonToken.Integer:
-                            long lValue = jsonReader.ReadAsInt32() ?? 0;
+                            long lValue = Convert.ToInt32(jsonReader.Value);
                             container.Set(propName, lValue);
                             break;
                         case JsonToken.Boolean:
-                            container.Set(propName, jsonReader.ReadAsBoolean() ?? false);
+                            container.Set(propName, Convert.ToBoolean(jsonReader.Value));
                             break;
                         case JsonToken.StartObject:
-                            if (!Deserialize(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonReader.ReadAsString() ?? string.Empty)), out object subColl) || subColl is not DataContainer subCollContainer)
+                            JToken jTok = JToken.ReadFrom(jsonReader);
+                            if (!Deserialize(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jTok.ToString())), out object subColl) || subColl is not DataContainer subCollContainer)
                                 continue;
                             container.AddContainer(propName, subCollContainer);
                             break;
@@ -102,7 +112,9 @@ namespace ToolQit.Serializers
             }
             return true;
         }
-        
+        #endregion
+
+        #region Sytem.Text.Json
         /*public bool Serialize(Stream stream, object data)
         {
             if (data is not DataContainer container) return false;
@@ -194,5 +206,6 @@ namespace ToolQit.Serializers
             }
             return true;
         }*/
+        #endregion
     }
 }
