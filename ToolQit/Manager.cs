@@ -1,5 +1,8 @@
 using System;
 using System.IO;
+using Serilog;
+using Serilog.Core;
+using Serilog.Formatting.Json;
 using ToolQit.Containers;
 using ToolQit.Serializers;
 
@@ -9,28 +12,53 @@ namespace ToolQit
     {
         static Manager()
         {
-            AppDomain.CurrentDomain.ProcessExit += (sender, args) => SaveSettings();
+            AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+            {
+                SaveSettings();
+                Log?.Dispose();
+            };
+            Log = LogConfig.CreateLogger();
             LoadSettings();
         }
-        
-        private static readonly string ConfigPath = Path.Combine(Environment.CurrentDirectory, "Settings.json");
-        private static readonly DataContainerJsonSerializer Serializer = new DataContainerJsonSerializer();
+
+        #region Properties
+        /// <summary>
+        /// Configured logger used in the library and application.
+        /// </summary>
+        public static readonly Logger Log;
 
         /// <summary>
         /// Application settings (Settings.json)
         /// </summary>
         public static DataContainer Settings { get; private set; } = new DataContainer();
+        
+        
+        // Config
+        private static readonly string ConfigPath = Path.Combine(Environment.CurrentDirectory, "Settings.json");
+        private static readonly DataContainerJsonSerializer Serializer = new DataContainerJsonSerializer();
+        // Logging
+        public static LoggerConfiguration LogConfig { get; set; } = new LoggerConfiguration()
+        
+#if DEBUG
+            .WriteTo.Debug()
+            .MinimumLevel.Verbose()
+#endif
+            .WriteTo.Console()
+            .WriteTo.File(formatter:new JsonFormatter(), path:Path.Combine(Environment.CurrentDirectory, "Logs", "log_.json"), rollingInterval: RollingInterval.Day);
+        #endregion
 
+        #region Functions
         public static void LoadSettings()
         {
             FileStream fs;
             try
             {
+                Log.Debug("Loading config from {ConPath}", ConfigPath);
                 fs = File.Open(ConfigPath, FileMode.Open, FileAccess.Read);
             }
             catch (Exception)
             {
-                //TODO: Log!
+                Log.Warning("Could not load settings!");
                 return;
             }
 
@@ -49,7 +77,7 @@ namespace ToolQit
             }
             catch (Exception)
             {
-                //TODO: Log!
+                Log.Error("Cannot save settings!");
                 return;
             }
 
@@ -59,5 +87,6 @@ namespace ToolQit
             }
             fsSave.Close();
         }
+        #endregion
     }
 }

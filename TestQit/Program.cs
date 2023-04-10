@@ -1,4 +1,5 @@
 ﻿using System;
+using ToolQit;
 
 namespace TestQit
 {
@@ -7,6 +8,7 @@ namespace TestQit
         public static void Main()
         {
             Console.WriteLine("TestQit!");
+            var testVal = Manager.Settings.GetString("Test");
         }
     }
 }
