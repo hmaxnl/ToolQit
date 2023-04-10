@@ -9,7 +9,10 @@
 
     <ItemGroup>
       <Compile Remove="Converters\DataCollectionJsonConverter.cs" />
-      <Compile Remove="Serializers\DataContainerJsonSerializer.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
 </Project>
