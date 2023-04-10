@@ -19,7 +19,9 @@ namespace ToolQit.Containers
         public void Set(string key, double dValue) => _data[key] = dValue;
         public void Set(string key, bool bValue) => _data[key] = bValue;
 
-        public string GetString(string key) => Convert.ToString(_data[key]) ?? string.Empty;
+        public bool ContainsKey(string key) => _data.ContainsKey(key);
+
+        public string GetString(string key) => Convert.ToString(_data[key]);
         public long GetLong(string key) => Convert.ToInt64(_data[key]);
         public double GetDouble(string key) => Convert.ToDouble(_data[key]);
         public bool GetBool(string key) => Convert.ToBoolean(_data[key]);
