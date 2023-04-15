@@ -15,8 +15,10 @@ namespace ToolQit
                 SaveSettings();
             };
             LoadSettings();
+            ConfigPath = LibSettings["Paths"].GetString("AppSettings");
         }
-        internal static DataContainer LibSettings { get; } = new DataContainer().SetupLibSettings();
+
+        internal static readonly DataContainer LibSettings = SetupLibSettings(new DataContainer());
         
         /// <summary>
         /// Application settings (Settings.json)
@@ -25,7 +27,7 @@ namespace ToolQit
 
 
         // Config
-        private static readonly string ConfigPath = LibSettings["Paths"].GetString("AppSettings");
+        private static readonly string ConfigPath;
         private static readonly DataContainerJsonSerializer Serializer = new DataContainerJsonSerializer();
 
         public static void LoadSettings()
@@ -69,7 +71,7 @@ namespace ToolQit
             fsSave.Close();
         }
 
-        private static DataContainer SetupLibSettings(this DataContainer container)
+        private static DataContainer SetupLibSettings(DataContainer container)
         {
             container["Paths"].Set("AppSettings", Path.Combine(Environment.CurrentDirectory, "Settings.json"));
             return container;

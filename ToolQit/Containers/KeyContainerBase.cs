@@ -21,15 +21,12 @@ namespace ToolQit.Containers
             {
                 if (key.Contains(_separator))
                     return AddFromQueue(new KeyQueue(key, _separator));
-                AddContainer(key, new TContainer());
+                if (!_containers.ContainsKey(key))
+                    AddContainer(key, new TContainer());
                 return _containers[key];
             }
         }
-        public void AddContainer(string key, TContainer container)
-        {
-            if (!_containers.ContainsKey(key))
-                _containers.Add(key, container);
-        }
+        public void AddContainer(string key, TContainer container) => _containers[key] = container;
         public bool RemoveContainer(string key) => _containers.Remove(key);
         public TContainer GetContainer(string key) => _containers[key];
 
