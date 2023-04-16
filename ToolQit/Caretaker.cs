@@ -13,6 +13,7 @@ namespace ToolQit
             AppDomain.CurrentDomain.ProcessExit += (_, _) =>
             {
                 SaveSettings();
+                Instances.Dispose();
             };
             LoadSettings();
             ConfigPath = LibSettings["Paths"].GetString("AppSettings");
@@ -21,9 +22,14 @@ namespace ToolQit
         internal static readonly DataContainer LibSettings = SetupLibSettings(new DataContainer());
         
         /// <summary>
-        /// Application settings (Settings.json)
+        /// Application settings. Will be automatically saved to disk in Settings.json after application shutdown.
         /// </summary>
         public static DataContainer Settings { get; private set; } = LibSettings["App.Settings"];
+
+        /// <summary>
+        /// Stores instances. Auto disposes instances on process exit!
+        /// </summary>
+        public static InstanceContainer Instances { get; } = new InstanceContainer();
 
 
         // Config
