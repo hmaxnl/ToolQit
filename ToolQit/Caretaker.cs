@@ -36,6 +36,7 @@ namespace ToolQit
         private static readonly string ConfigPath;
         private static readonly DataContainerJsonSerializer Serializer = new DataContainerJsonSerializer();
 
+        public static bool ConfigExists() => File.Exists(ConfigPath);
         public static void LoadSettings()
         {
             FileStream fsLoad;
@@ -44,9 +45,9 @@ namespace ToolQit
                 Log.Debug("Loading config from: {ConPath}", ConfigPath);
                 fsLoad = File.Open(ConfigPath, FileMode.Open, FileAccess.Read);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Log.Warning("Could not load settings!");
+                Log.Fatal(ex, "Could not load data!");
                 return;
             }
 
