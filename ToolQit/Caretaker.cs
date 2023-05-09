@@ -35,11 +35,11 @@ namespace ToolQit
         // Config
         private static readonly string ConfigPath;
         private static readonly DataContainerJsonSerializer Serializer = new DataContainerJsonSerializer();
-
-        public static bool ConfigExists() => File.Exists(ConfigPath);
-        public static void LoadSettings()
+        
+        public static bool LoadSettings()
         {
             FileStream fsLoad;
+            bool loaded = false;
             try
             {
                 Log.Debug("Loading config from: {ConPath}", ConfigPath);
@@ -48,18 +48,22 @@ namespace ToolQit
             catch (Exception ex)
             {
                 Log.Fatal(ex, "Could not load data!");
-                return;
+                return loaded;
             }
 
             if (Serializer.Deserialize(fsLoad, out object settings))
+            {
                 Settings = (DataContainer)settings;
-
+                loaded = true;
+            }
             fsLoad.Close();
+            return loaded;
         }
 
-        public static void SaveSettings()
+        public static bool SaveSettings()
         {
             FileStream fsSave;
+            bool saved = false;
             try
             {
                 Log.Debug("Saving config to: {ConPath}", ConfigPath);
@@ -68,14 +72,16 @@ namespace ToolQit
             catch (Exception)
             {
                 Log.Error("Cannot save settings!");
-                return;
+                return saved;
             }
 
             if (Serializer.Serialize(fsSave, Settings))
             {
                 fsSave.Flush();
+                saved = true;
             }
             fsSave.Close();
+            return saved;
         }
 
         private static DataContainer SetupLibSettings(DataContainer container)
