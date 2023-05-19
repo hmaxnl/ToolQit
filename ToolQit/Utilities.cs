@@ -5,6 +5,9 @@ namespace ToolQit
 {
     public static class Utilities
     {
+        private static readonly Random Random = new Random();
+        public static string GenerateRandomHexColor() => $"#{Random.Next(0x1000000):X6}";
+
         public static TTo? ConvertFrom<TTo, TFrom>(TFrom from)
         {
             string json = JsonConvert.SerializeObject(from);
@@ -18,10 +21,6 @@ namespace ToolQit
         /// <summary>
         /// Convert bytes to the correct size suffix.
         /// </summary>
-        /// <param name="bytes">The bytes that need to be converted to the corresponding suffix</param>
-        /// <param name="decimalPlaces">Set the decimal places for the suffix</param>
-        /// <returns>The suffix string</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Exception is thrown when the decimalPlaces arg is zero or negative</exception>
         public static string SizeSuffix(long bytes, int decimalPlaces = 1)
         {
             if (decimalPlaces < 0)
