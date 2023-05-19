@@ -1,9 +1,16 @@
 using System;
+using Newtonsoft.Json;
 
 namespace ToolQit
 {
     public static class Utilities
     {
+        public static TTo? ConvertFrom<TTo, TFrom>(TFrom from)
+        {
+            string json = JsonConvert.SerializeObject(from);
+            return JsonConvert.DeserializeObject<TTo>(json);
+        }
+
         private static readonly string[] SizeSuffixes =
             { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
         // Stolen from stackoverflow!
