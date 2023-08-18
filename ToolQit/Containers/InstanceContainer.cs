@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Serilog;
+using ToolQit.Logging;
 
 namespace ToolQit.Containers
 {
@@ -9,6 +9,11 @@ namespace ToolQit.Containers
     /// </summary>
     public class InstanceContainer : IDisposable
     {
+        public InstanceContainer()
+        {
+            _log = LogManager.CreateLogger(nameof(InstanceContainer));
+        }
+        private readonly ILogPipe _log;
         private readonly Dictionary<string, InstanceNode> _tCollection = new Dictionary<string, InstanceNode>();
 
         /// <summary>
@@ -39,7 +44,7 @@ namespace ToolQit.Containers
                 case null:
                     break;
                 case IDisposable instance when dispose:
-                    Log.Debug("Disposing disposable object... (InstanceContainer)");
+                    _log.Debug("Disposing disposable object... (InstanceContainer)");
                     instance.Dispose();
                     break;
             }
@@ -74,7 +79,7 @@ namespace ToolQit.Containers
                     case null:
                         continue;
                     case IDisposable disposable:
-                        Log.Verbose("Disposing: {Key}", kvp.Key);
+                        _log.Verbose("Disposing: {Key}", kvp.Key);
                         disposable.Dispose();
                         break;
                 }
