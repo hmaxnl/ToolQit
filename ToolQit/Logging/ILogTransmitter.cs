@@ -3,18 +3,14 @@ using System;
 namespace ToolQit.Logging
 {
     /// <summary>
-    /// This interface is used to pipe logging to a logging library or own logging implementation.
+    /// This interface is used to transmit logging to a logging library or own logging implementation.
     /// This will by it self not write any data to a fs, console or any other location!
     /// </summary>
-    public interface ILogPipe
+    public interface ILogTransmitter
     {
+        public long LogsTransmitted { get; }
         /// <summary>
-        /// Amount of logs this pipe has piped over.
-        /// </summary>
-        public long LogCount { get; }
-
-        /// <summary>
-        /// Pipe name, to identify which part of the program logged the message.
+        /// Transmitter name, to identify which part of the program logged the message.
         /// </summary>
         public string Name { get; }
 

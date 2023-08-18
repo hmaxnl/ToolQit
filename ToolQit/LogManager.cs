@@ -1,32 +1,30 @@
 using System;
-using System.Collections.Generic;
 using ToolQit.Logging;
 
 namespace ToolQit
 {
+    //TODO: Need to be worked out!
     public static class LogManager
     {
-        public static ILogPipe CreateLogger(string name)
+        public static ILogTransmitter CreateLogger(string name)
         {
-            return new LogPipe(name, HandleLogFromPipe);
+            return new LogTransmitter(name, ReceiveFromTransmitter);
         }
 
-        public static void RegisterLogOutput(ILogOutput logOutput)
+        public static void RegisterLogReceiver(ILogReceiver logReceiver)
         {
-            if (logOutput != null)
+            if (logReceiver != null)
             {
-                EmitToOutput += logOutput.Receive;
+                Transmit += logReceiver.Receive;
             }
         }
+        private static event Action<LogData, ILogTransmitter>? Transmit;
 
-        private static HashSet<ILogOutput> _outputs = new HashSet<ILogOutput>();
-        private static event Action<LogData, ILogPipe>? EmitToOutput;
-
-        private static void HandleLogFromPipe(LogData logData, ILogPipe sender)
+        private static void ReceiveFromTransmitter(LogData logData, ILogTransmitter sender)
         {
             if (sender == null)
                 return;
-            EmitToOutput?.Invoke(logData, sender);
+            Transmit?.Invoke(logData, sender);
         }
     }
 }
