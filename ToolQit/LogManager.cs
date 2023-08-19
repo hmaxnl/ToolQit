@@ -1,12 +1,37 @@
 using System;
+using ToolQit.Extensions;
 using ToolQit.Logging;
 
 namespace ToolQit
 {
-    //TODO: Need to be worked out!
     public static class LogManager
     {
-        public static ILogTransmitter CreateLogger(string name)
+        public static ILog CreateLogger(string sender)
+        {
+            if (sender.IsNullEmptyWhiteSpace())
+                throw new ArgumentException($"[{nameof(LogManager)}] sender cannot be null or empty!");
+            return new Logger(sender, OnReceiveLog);
+        }
+
+        public static void RegisterAdapter(BaseLogAdapter adapter)
+        {
+            EmitLog += adapter.OnReceive;
+            adapter.DisposeAdapter += DisposeAdapter;
+        }
+        
+        private static event Action<LogEntry>? EmitLog;
+
+        private static void DisposeAdapter(BaseLogAdapter adapter)
+        {
+            EmitLog -= adapter.OnReceive;
+            adapter.DisposeAdapter -= DisposeAdapter;
+        }
+
+        private static void OnReceiveLog(LogEntry entry) => EmitLog?.Invoke(entry);
+
+
+        // OLD =================================================
+        /*public static ILogTransmitter CreateLogger2(string name)
         {
             return new LogTransmitter(name, ReceiveFromTransmitter);
         }
@@ -18,13 +43,14 @@ namespace ToolQit
                 Transmit += logReceiver.Receive;
             }
         }
-        private static event Action<LogData, ILogTransmitter>? Transmit;
+        private static event Action<LogEntry, ILogTransmitter>? Transmit;
+        private static event Action<LogEntry, ILogReceiver>? Receive;
 
-        private static void ReceiveFromTransmitter(LogData logData, ILogTransmitter sender)
+        private static void ReceiveFromTransmitter(LogEntry logEntry, ILogTransmitter sender)
         {
             if (sender == null)
                 return;
-            Transmit?.Invoke(logData, sender);
-        }
+            Transmit?.Invoke(logEntry, sender);
+        }*/
     }
 }

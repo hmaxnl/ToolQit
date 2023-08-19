@@ -20,7 +20,7 @@ namespace ToolQit
             ConfigPath = LibSettings["Paths"].GetString("AppSettings");
         }
 
-        private static ILogTransmitter _log;
+        private static ILog _log;
         internal static readonly DataContainer LibSettings = SetupLibSettings(new DataContainer());
         
         /// <summary>

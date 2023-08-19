@@ -2,18 +2,11 @@ using System;
 
 namespace ToolQit.Logging
 {
-    /// <summary>
-    /// This interface is used to transmit logging to a logging library or own logging implementation.
-    /// This will by it self not write any data to a fs, console or any other location!
-    /// </summary>
-    public interface ILogTransmitter
+    public interface ILog : IDisposable
     {
-        public long LogsTransmitted { get; }
-        /// <summary>
-        /// Transmitter name, to identify which part of the program logged the message.
-        /// </summary>
-        public string Name { get; }
-
+        public string Sender { get; }
+        public event Action<LogEntry> EmitLog;
+        
         public void Information(string template, params object?[]? parameters);
         public void Notify(string template, params object?[]? parameters);
         public void Warning(string template, params object?[]? parameters);

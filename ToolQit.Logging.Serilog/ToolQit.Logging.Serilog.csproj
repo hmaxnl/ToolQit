@@ -1,20 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ToolQit.Logging.Serilog\ToolQit.Logging.Serilog.csproj" />
       <ProjectReference Include="..\ToolQit\ToolQit.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Serilog" Version="3.0.1" />
-      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     </ItemGroup>
 
 </Project>

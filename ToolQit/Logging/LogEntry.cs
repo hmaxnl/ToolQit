@@ -2,12 +2,13 @@ using System;
 
 namespace ToolQit.Logging
 {
-    public class LogData
+    public class LogEntry
     {
         public LogLevel Level;
         public string Template = string.Empty;
         public object?[]? Parameters;
         public Exception? Exception;
+        public ILog Logger;
     }
     public enum LogLevel
     {

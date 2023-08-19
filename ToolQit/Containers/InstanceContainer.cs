@@ -13,7 +13,7 @@ namespace ToolQit.Containers
         {
             _log = LogManager.CreateLogger(nameof(InstanceContainer));
         }
-        private readonly ILogTransmitter _log;
+        private readonly ILog _log;
         private readonly Dictionary<string, InstanceNode> _tCollection = new Dictionary<string, InstanceNode>();
 
         /// <summary>

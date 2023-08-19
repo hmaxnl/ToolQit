@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolQit", "ToolQit\ToolQit.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestQit", "TestQit\TestQit.csproj", "{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{64513A81-B48B-4ED9-8854-10C119FC852E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolQit.Logging.Serilog", "ToolQit.Logging.Serilog\ToolQit.Logging.Serilog.csproj", "{BA575233-6779-4F81-819E-C9ACD2C2893A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,12 @@ Global
 		{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29EFB16D-F9A4-4282-B47D-5DCB71E4BCDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA575233-6779-4F81-819E-C9ACD2C2893A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA575233-6779-4F81-819E-C9ACD2C2893A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA575233-6779-4F81-819E-C9ACD2C2893A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA575233-6779-4F81-819E-C9ACD2C2893A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BA575233-6779-4F81-819E-C9ACD2C2893A} = {64513A81-B48B-4ED9-8854-10C119FC852E}
 	EndGlobalSection
 EndGlobal
