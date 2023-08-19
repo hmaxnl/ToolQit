@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using Serilog;
 using ToolQit.Containers;
+using ToolQit.Logging;
 using ToolQit.Serializers;
 
 namespace ToolQit
@@ -10,6 +10,7 @@ namespace ToolQit
     {
         static Caretaker()
         {
+            _log = LogManager.CreateLogger(nameof(Caretaker));
             AppDomain.CurrentDomain.ProcessExit += (_, _) =>
             {
                 SaveSettings();
@@ -19,6 +20,7 @@ namespace ToolQit
             ConfigPath = LibSettings["Paths"].GetString("AppSettings");
         }
 
+        private static ILog _log;
         internal static readonly DataContainer LibSettings = SetupLibSettings(new DataContainer());
         
         /// <summary>
@@ -42,12 +44,12 @@ namespace ToolQit
             bool loaded = false;
             try
             {
-                Log.Debug("Loading config from: {ConPath}", ConfigPath);
+                _log.Debug("Loading config from: {ConPath}", ConfigPath);
                 fsLoad = File.Open(ConfigPath, FileMode.Open, FileAccess.Read);
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Could not load data!");
+                _log.Fatal(ex, "Could not load data!");
                 return loaded;
             }
 
@@ -66,12 +68,12 @@ namespace ToolQit
             bool saved = false;
             try
             {
-                Log.Debug("Saving config to: {ConPath}", ConfigPath);
+                _log.Debug("Saving config to: {ConPath}", ConfigPath);
                 fsSave = File.Open(ConfigPath, FileMode.Create, FileAccess.Write);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Log.Error("Cannot save settings!");
+                _log.Error(ex, "Cannot save settings!");
                 return saved;
             }
 

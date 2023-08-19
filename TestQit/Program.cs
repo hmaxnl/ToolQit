@@ -1,28 +1,30 @@
 ﻿using System;
-using System.IO;
 using Serilog;
-using Serilog.Formatting.Json;
 using ToolQit;
+using ToolQit.Logging;
+using ToolQit.Logging.Serilog;
 
 namespace TestQit
 {
     internal static class Program
     {
+        private static ILog _log;
         public static void Main()
         {
             Log.Logger = LogConfig.CreateLogger();
-            Console.WriteLine("TestQit!");
-            var testVal = Caretaker.Settings.GetString("Test");
-            Console.WriteLine("Value from settings: {0}", testVal);
+            LogManager.RegisterAdapter(new SerilogAdapter(Log.Logger));
+            _log = LogManager.CreateLogger(nameof(Program));
+            _log.Information("TestQit!");
+            _log.Error(new Exception("Test exception"), "Error!!!!!");
+            _log.Warning("Class: {ClassName}", nameof(Program));
         }
         
-        private static LoggerConfiguration LogConfig { get; set; } = new LoggerConfiguration()
-        
+        private static readonly LoggerConfiguration LogConfig = new LoggerConfiguration()
 #if DEBUG
-            .WriteTo.Debug()
+            /*.WriteTo.Debug()*/
             .MinimumLevel.Verbose()
 #endif
             .WriteTo.Console()
-            .WriteTo.File(formatter:new JsonFormatter(), path:Path.Combine(Environment.CurrentDirectory, "Logs", "log_.json"), rollingInterval: RollingInterval.Day);
+            /*.WriteTo.File(formatter:new JsonFormatter(), path:Path.Combine(Environment.CurrentDirectory, "Logs", "log_.json"), rollingInterval: RollingInterval.Day)*/;
     }
 }
