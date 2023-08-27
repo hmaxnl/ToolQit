@@ -16,6 +16,7 @@ namespace ToolQit
 
         private static readonly string[] SizeSuffixes =
             { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+        
         // Stolen from stackoverflow!
         // https://stackoverflow.com/a/14488941/9948300
         /// <summary>
