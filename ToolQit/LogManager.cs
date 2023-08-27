@@ -1,56 +1,34 @@
 using System;
-using ToolQit.Extensions;
+using System.Collections.Generic;
 using ToolQit.Logging;
+
 
 namespace ToolQit
 {
     public static class LogManager
     {
-        public static ILog CreateLogger(string sender)
+        public static ILog CreateLogger(Type sender)
         {
-            if (sender.IsNullEmptyWhiteSpace())
-                throw new ArgumentException($"[{nameof(LogManager)}] sender cannot be null or empty!");
+            if (sender == null)
+                throw new ArgumentException($"[{nameof(LogManager)}] sender cannot be null!");
             return new Logger(sender, OnReceiveLog);
         }
 
-        public static void RegisterAdapter(BaseLogAdapter adapter)
+        public static bool RegisterAdapter(BaseLogAdapter adapter)
         {
-            EmitLog += adapter.OnReceive;
-            adapter.DisposeAdapter += DisposeAdapter;
-        }
-        
-        private static event Action<LogEntry>? EmitLog;
-
-        private static void DisposeAdapter(BaseLogAdapter adapter)
-        {
-            EmitLog -= adapter.OnReceive;
-            adapter.DisposeAdapter -= DisposeAdapter;
+            if (!AdapterSet.Add(adapter)) return false;
+            adapter.RegisterEvent(ref EmitLog);
+            return true;
         }
 
+        public static void UnregisterAdapter(BaseLogAdapter adapter)
+        {
+            if (AdapterSet.Remove(adapter))
+                adapter.Dispose();
+        }
+
+        internal static event Action<LogEntry>? EmitLog;
+        private static readonly HashSet<BaseLogAdapter> AdapterSet = new HashSet<BaseLogAdapter>();
         private static void OnReceiveLog(LogEntry entry) => EmitLog?.Invoke(entry);
-
-
-        // OLD =================================================
-        /*public static ILogTransmitter CreateLogger2(string name)
-        {
-            return new LogTransmitter(name, ReceiveFromTransmitter);
-        }
-
-        public static void RegisterLogReceiver(ILogReceiver logReceiver)
-        {
-            if (logReceiver != null)
-            {
-                Transmit += logReceiver.Receive;
-            }
-        }
-        private static event Action<LogEntry, ILogTransmitter>? Transmit;
-        private static event Action<LogEntry, ILogReceiver>? Receive;
-
-        private static void ReceiveFromTransmitter(LogEntry logEntry, ILogTransmitter sender)
-        {
-            if (sender == null)
-                return;
-            Transmit?.Invoke(logEntry, sender);
-        }*/
     }
 }

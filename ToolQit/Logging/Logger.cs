@@ -4,12 +4,12 @@ namespace ToolQit.Logging
 {
     public class Logger : ILog
     {
-        internal Logger(string sender, Action<LogEntry>? receiveLog)
+        internal Logger(Type sender, Action<LogEntry>? receiveLog)
         {
+            SenderType = sender ?? throw new ArgumentException($"[{nameof(Logger)}] Sender cannot be null!");
             EmitLog = receiveLog;
-            Sender = sender;
         }
-        public string Sender { get; }
+        public Type SenderType { get; }
         public event Action<LogEntry>? EmitLog;
         
         public void Information(string template, params object?[]? parameters) =>

@@ -4,8 +4,7 @@ namespace ToolQit.Logging
 {
     public interface ILog : IDisposable
     {
-        public string Sender { get; }
-        public event Action<LogEntry> EmitLog;
+        public Type SenderType { get; }
         
         public void Information(string template, params object?[]? parameters);
         public void Notify(string template, params object?[]? parameters);

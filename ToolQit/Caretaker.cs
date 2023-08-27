@@ -10,7 +10,7 @@ namespace ToolQit
     {
         static Caretaker()
         {
-            _log = LogManager.CreateLogger(nameof(Caretaker));
+            _log = LogManager.CreateLogger(typeof(Caretaker));
             AppDomain.CurrentDomain.ProcessExit += (_, _) =>
             {
                 SaveSettings();
