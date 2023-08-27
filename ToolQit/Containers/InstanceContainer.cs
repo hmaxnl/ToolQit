@@ -11,7 +11,7 @@ namespace ToolQit.Containers
     {
         public InstanceContainer()
         {
-            _log = LogManager.CreateLogger(nameof(InstanceContainer));
+            _log = LogManager.CreateLogger(typeof(InstanceContainer));
         }
         private readonly ILog _log;
         private readonly Dictionary<string, InstanceNode> _tCollection = new Dictionary<string, InstanceNode>();

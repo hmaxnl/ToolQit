@@ -2,10 +2,10 @@ using System;
 
 namespace ToolQit.Logging
 {
-    public class LogEntry
+    public struct LogEntry
     {
         public LogLevel Level;
-        public string Template = string.Empty;
+        public string Template;
         public object?[]? Parameters;
         public Exception? Exception;
         public ILog Logger;
